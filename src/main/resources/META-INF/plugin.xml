@@ -1,0 +1,43 @@
+<idea-plugin>
+    <id>com.pino.intellij-dynamic-query</id>
+    <name>Dynamic Query</name>
+    <vendor>pino</vendor>
+
+    <description><![CDATA[
+    <p>IDE support for dynamic queries, where <code>[ ... ]</code> marks an optional predicate that
+    the runtime keeps or drops depending on whether its parameters are bound:</p>
+    <ul>
+      <li><code>&#64;DynamicJpqlQuery</code> &mdash; JPQL</li>
+      <li><code>&#64;DynamicNativeQuery</code> &mdash; native SQL</li>
+    </ul>
+    <pre>
+    &#64;DynamicJpqlQuery("""
+        SELECT u FROM UserEntity u
+        WHERE 1 = 1
+        [ AND u.name = :name ]
+        [ AND u.age = :age ]
+        """)
+    </pre>
+    <p>The plugin injects JPAQL or SQL into the annotation value while leaving the
+    <code>[ ]</code> markers out of the injected fragment, so IntelliJ's own parsers see a plain
+    query. You keep syntax highlighting, entity/table and field/column resolution, completion and
+    parameter inspections &mdash; and no longer need <code>&#64;Language("JPAQL")</code> or
+    <code>&#64;Language("SQL")</code>.</p>
+    ]]></description>
+
+    <!-- Java PSI is needed to find the annotation. -->
+    <depends>com.intellij.modules.java</depends>
+    <!-- com.intellij.javaee.jpa provides JPAQL; com.intellij.database provides SQL. Both are
+         optional: with one missing, only the other dialect is injected. -->
+    <depends optional="true" config-file="dynamic-query-jpql.xml">com.intellij.javaee.jpa</depends>
+    <depends optional="true" config-file="dynamic-query-sql.xml">com.intellij.database</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <multiHostInjector
+                implementation="com.pino.intellij.dynamicquery.DynamicQueryLanguageInjector"/>
+
+        <annotator
+                language="JAVA"
+                implementationClass="com.pino.intellij.dynamicquery.highlight.DynamicQuerySyntaxAnnotator"/>
+    </extensions>
+</idea-plugin>

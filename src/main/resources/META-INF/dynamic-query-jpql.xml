@@ -1,0 +1,5 @@
+<!--
+  Loaded only when the JPA plugin is present. The injector resolves JPAQL by id at runtime, so
+  this file only has to exist for the optional dependency to be declarable.
+-->
+<idea-plugin/>

@@ -1,0 +1,9 @@
+.gradle/
+.intellijPlatform/
+build/
+out/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+*.iml
+/.idea/
