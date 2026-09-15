@@ -4,7 +4,7 @@
     </a>
 </div>
 
-<h1 align="center">Intellij Dynamic Queryp</h1>
+<h1 align="center">Intellij Dynamic Query</h1>
 
 <p align="center">
 <a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/r/stars/34291?style=flat-square"></a>
