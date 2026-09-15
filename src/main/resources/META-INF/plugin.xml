@@ -8,21 +8,23 @@
     the runtime keeps or drops depending on whether its parameters are bound:</p>
     <ul>
       <li><code>&#64;DynamicJpqlQuery</code> &mdash; JPQL</li>
-      <li><code>&#64;DynamicNativeQuery</code> &mdash; native SQL</li>
+      <li><code>&#64;DynamicNativeQuery</code> &mdash; Native SQL</li>
     </ul>
-    <pre>
-    &#64;DynamicJpqlQuery("""
-        SELECT u FROM UserEntity u
-        WHERE 1 = 1
-        [ AND u.name = :name ]
-        [ AND u.age = :age ]
-        """)
-    </pre>
+
     <p>The plugin injects JPAQL or SQL into the annotation value while leaving the
     <code>[ ]</code> markers out of the injected fragment, so IntelliJ's own parsers see a plain
     query. You keep syntax highlighting, entity/table and field/column resolution, completion and
     parameter inspections &mdash; and no longer need <code>&#64;Language("JPAQL")</code> or
     <code>&#64;Language("SQL")</code>.</p>
+
+    <pre>
+&#64;DynamicJpqlQuery("""
+    SELECT u FROM UserEntity u
+    WHERE 1 = 1
+    [ AND u.name = :name ]
+    [ AND u.age = :age ]
+    """)
+    </pre>
     ]]></description>
 
     <!-- Java PSI is needed to find the annotation. -->
