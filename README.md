@@ -7,7 +7,7 @@
 <h1 align="center">Intellij Dynamic Queryp</h1>
 
 <p align="center">
-<a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/r/stars/23170?style=flat-square"></a>
+<a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/r/stars/34291?style=flat-square"></a>
 <a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/d/34291-dynamic-query.svg?style=flat-square"></a>
 <a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/v/34291-dynamic-query.svg?style=flat-square"></a>
 </p>
