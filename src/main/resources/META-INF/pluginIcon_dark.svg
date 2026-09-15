@@ -1,0 +1,11 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- The [ ] markers of a dynamic query. -->
+  <g stroke="#548AF7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M13 7H7.5v26H13"/>
+    <path d="M27 7h5.5v26H27"/>
+  </g>
+  <!-- Predicates: kept, dynamic, dropped. -->
+  <rect x="13.5" y="11" width="13" height="3" rx="1.5" fill="#B4B8BF"/>
+  <rect x="13.5" y="18.5" width="13" height="3" rx="1.5" fill="#F0A45B"/>
+  <rect x="13.5" y="26" width="8" height="3" rx="1.5" fill="#B4B8BF" opacity=".35"/>
+</svg>
