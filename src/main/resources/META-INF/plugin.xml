@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.pino.intellij-dynamic-query</id>
     <name>Dynamic Query</name>
-    <vendor>pino</vendor>
+    <vendor>Pino</vendor>
 
     <description><![CDATA[
     <p>IDE support for dynamic queries, where <code>[ ... ]</code> marks an optional predicate that
