@@ -1,4 +1,20 @@
-# Dynamic Query — IntelliJ Plugin
+<div align="center">
+    <a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query">
+        <img src="./src/main/resources/META-INF/pluginIcon.svg" width="280" height="280" alt="logo"/>
+    </a>
+</div>
+
+<h1 align="center">Intellij Dynamic Queryp</h1>
+
+<p align="center">
+<a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/r/stars/23170?style=flat-square"></a>
+<a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/d/34291-dynamic-query.svg?style=flat-square"></a>
+<a href="https://plugins.jetbrains.com/plugin/34291-dynamic-query"><img src="https://img.shields.io/jetbrains/plugin/v/34291-dynamic-query.svg?style=flat-square"></a>
+</p>
+
+<br>
+
+> Jetbrains Marketplace: https://plugins.jetbrains.com/plugin/34291-dynamic-query
 
 IDE support for dynamic queries, where `[ ... ]` marks an optional predicate that the runtime
 keeps or drops depending on whether its parameters are bound.
