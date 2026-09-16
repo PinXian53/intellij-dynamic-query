@@ -38,6 +38,28 @@ keeps or drops depending on whether its parameters are bound.
 No `@Language("JPAQL")` is needed, `[` and `]` are not syntax errors, and JPQL highlighting,
 entity/field resolution, completion and parameter inspections all keep working.
 
+### `countQuery`
+
+Both annotations take an optional `countQuery` for the total-count query of a paged lookup. It is
+treated exactly like `value` — same dialect, same `[ ... ]` syntax, same injection — so the count
+query gets the same highlighting and inspections as the query it counts:
+
+```java
+@DynamicJpqlQuery(
+        value = """
+                SELECT u FROM UserEntity u
+                WHERE 1 = 1
+                [ AND u.name = :name ]
+                """,
+        countQuery = """
+                SELECT COUNT(u) FROM UserEntity u
+                WHERE 1 = 1
+                [ AND u.name = :name ]
+                """)
+```
+
+An empty `countQuery` (the default) has nothing to inject into and is simply left alone.
+
 ## How it works
 
 The plugin is a thin adapter — it does **not** reimplement JPQL or SQL support:
@@ -65,7 +87,7 @@ mapping (`toSourceOffset` / `toSourceRange`) for code that needs it outside the 
 | Class                             | Responsibility |
 | --------------------------------- | -------------- |
 | `DynamicQueryDialect`             | Annotation ⇄ language pairing. Add a dialect here and nothing else changes. |
-| `DynamicQueryAnnotationDetector`  | Is this Java string a dynamic query, and in which dialect? |
+| `DynamicQueryAnnotationDetector`  | Is this Java string a dynamic query (`value` or `countQuery`), and in which dialect? |
 | `DynamicQueryLexer` / `DynamicQueryParser` | Tokenise and parse the `[ ... ]` syntax into a tree. |
 | `DynamicQueryPreprocessor`        | Flatten the tree into plain query text plus `OffsetMapping`s. |
 | `DynamicQueryPsiUtils`            | Literal content ranges, string-concatenation handling. |
@@ -74,6 +96,7 @@ mapping (`toSourceOffset` / `toSourceRange`) for code that needs it outside the 
 
 ### What it deliberately handles
 
+- The `value` and `countQuery` attributes of both annotations, named or in the `@A("...")` shorthand.
 - Text blocks and ordinary string literals, including `"a" + "b"` concatenation.
 - Nested optional blocks: `[ AND (u.a = :a [ OR u.b = :b ]) ]`.
 - Brackets inside string literals: `WHERE u.code LIKE '[%'` is not a marker.
@@ -118,9 +141,23 @@ For a quick manual check, the annotations the plugin recognises are matched by s
 declaration works:
 
 ```java
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface DynamicJpqlQuery {
     String value();
+
+    String countQuery() default "";
+}
+```
+
+```java
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface DynamicNativeQuery {
+    String value();
+
+    String countQuery() default "";
 }
 ```

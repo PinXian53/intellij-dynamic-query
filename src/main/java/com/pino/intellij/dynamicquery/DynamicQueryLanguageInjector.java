@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Injects the right query language into the value of a dynamic query annotation, so that no
- * {@code @Language(...)} is needed on the declaration:
+ * Injects the right query language into the queries of a dynamic query annotation — both its
+ * {@code value} and its optional {@code countQuery} — so that no {@code @Language(...)} is needed
+ * on the declaration:
  *
  * <ul>
  *   <li>{@code @DynamicJpqlQuery} &rarr; JPAQL</li>

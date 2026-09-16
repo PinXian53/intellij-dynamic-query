@@ -11,7 +11,8 @@
       <li><code>&#64;DynamicNativeQuery</code> &mdash; Native SQL</li>
     </ul>
 
-    <p>The plugin injects JPAQL or SQL into the annotation value while leaving the
+    <p>The plugin injects JPAQL or SQL into the annotation's <code>value</code> and optional
+    <code>countQuery</code> while leaving the
     <code>[ ]</code> markers out of the injected fragment, so IntelliJ's own parsers see a plain
     query. You keep syntax highlighting, entity/table and field/column resolution, completion and
     parameter inspections &mdash; and no longer need <code>&#64;Language("JPAQL")</code> or

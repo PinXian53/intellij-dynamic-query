@@ -9,19 +9,34 @@ import com.intellij.psi.PsiNameValuePair;
 import com.intellij.psi.PsiParenthesizedExpression;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 /**
- * Decides whether a Java string is the value of a dynamic query annotation, and in which dialect
- * it is written.
+ * Decides whether a Java string is a query of a dynamic query annotation — its {@code value} or
+ * its {@code countQuery} — and in which dialect it is written.
  *
  * <p>Kept separate from the injector so that supporting another annotation, or renaming an
  * existing one, is a change to {@link DynamicQueryDialect} alone.
  */
 public final class DynamicQueryAnnotationDetector {
 
-    /** The attribute carrying the query. {@code null} means the shorthand {@code @A("...")}. */
-    private static final String QUERY_ATTRIBUTE = "value";
+    /**
+     * The attributes carrying a query.
+     *
+     * <p>{@code value} is the query itself and {@code countQuery} the optional total-count query;
+     * both are written in the same dialect, so both get the same injection and the same
+     * {@code [ ... ]} handling. An unnamed pair is the shorthand {@code @A("...")}, i.e.
+     * {@code value}.
+     */
+    private static final Set<String> QUERY_ATTRIBUTES = Set.of("value", "countQuery");
 
     private DynamicQueryAnnotationDetector() {
+    }
+
+    /** Whether an annotation attribute of this name carries a query. */
+    public static boolean isQueryAttribute(@Nullable String attributeName) {
+        // A pair with no name is the shorthand for `value`.
+        return attributeName == null || QUERY_ATTRIBUTES.contains(attributeName);
     }
 
     /** Whether {@code expression} is (part of) the query of a dynamic query annotation. */
@@ -54,8 +69,9 @@ public final class DynamicQueryAnnotationDetector {
     }
 
     /**
-     * Walks up from an expression to the annotation whose query attribute contains it, stepping
-     * over concatenations, parentheses and {@code {"a", "b"}} initializers on the way.
+     * Walks up from an expression to the annotation whose query attribute ({@code value} or
+     * {@code countQuery}) contains it, stepping over concatenations, parentheses and
+     * {@code {"a", "b"}} initializers on the way.
      */
     private static @Nullable PsiAnnotation findEnclosingAnnotation(@Nullable PsiElement expression) {
         if (expression == null) {
@@ -72,8 +88,7 @@ public final class DynamicQueryAnnotationDetector {
         if (!(parent instanceof PsiNameValuePair pair)) {
             return null;
         }
-        String attributeName = pair.getName();
-        if (attributeName != null && !QUERY_ATTRIBUTE.equals(attributeName)) {
+        if (!isQueryAttribute(pair.getName())) {
             return null;
         }
         if (!(pair.getParent() instanceof PsiAnnotationParameterList parameterList)) {
