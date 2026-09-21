@@ -4,11 +4,12 @@
     <vendor>Pino</vendor>
 
     <description><![CDATA[
-    <p>IDE support for dynamic queries, where <code>[ ... ]</code> marks an optional predicate that
-    the runtime keeps or drops depending on whether its parameters are bound:</p>
+    <p>IDE support for <code>&#64;DynamicQuery</code>, where <code>[ ... ]</code> marks an optional
+    predicate that the runtime keeps or drops depending on whether its parameters are bound. The
+    annotation's <code>nativeQuery</code> attribute picks the dialect:</p>
     <ul>
-      <li><code>&#64;DynamicJpqlQuery</code> &mdash; JPQL</li>
-      <li><code>&#64;DynamicNativeQuery</code> &mdash; Native SQL</li>
+      <li><code>nativeQuery = false</code> (the default) &mdash; JPQL</li>
+      <li><code>nativeQuery = true</code> &mdash; Native SQL</li>
     </ul>
 
     <p>The plugin injects JPAQL or SQL into the annotation's <code>value</code> and optional
@@ -19,7 +20,7 @@
     <code>&#64;Language("SQL")</code>.</p>
 
     <pre>
-&#64;DynamicJpqlQuery("""
+&#64;DynamicQuery("""
     SELECT u FROM UserEntity u
     WHERE 1 = 1
     [ AND u.name = :name ]

@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Injects the right query language into the queries of a dynamic query annotation — both its
+ * Injects the right query language into the queries of a {@code @DynamicQuery} — both its
  * {@code value} and its optional {@code countQuery} — so that no {@code @Language(...)} is needed
  * on the declaration:
  *
  * <ul>
- *   <li>{@code @DynamicJpqlQuery} &rarr; JPAQL</li>
- *   <li>{@code @DynamicNativeQuery} &rarr; SQL</li>
+ *   <li>{@code nativeQuery = false} (the default) &rarr; JPAQL</li>
+ *   <li>{@code nativeQuery = true} &rarr; SQL</li>
  * </ul>
  *
  * <p>The {@code [ ... ]} markers are removed by <em>not injecting them</em>: instead of one shred

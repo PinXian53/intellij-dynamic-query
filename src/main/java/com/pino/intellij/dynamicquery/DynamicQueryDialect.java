@@ -6,32 +6,24 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The query dialects that support the dynamic {@code [ ... ]} syntax.
  *
- * <p>Each dialect pairs an annotation with the IntelliJ language its value is written in. The
- * optional-predicate syntax is identical in both; only the language handed to the platform
- * differs, which is why everything else in this plugin is dialect-agnostic.
- *
- * <p>Adding a third dialect is a matter of adding a constant here.
+ * <p>A single annotation — {@code @DynamicQuery} — carries both: its {@code nativeQuery} attribute
+ * decides which one its query is written in. The optional-predicate syntax is identical in both;
+ * only the language handed to the platform differs, which is why everything else in this plugin is
+ * dialect-agnostic.
  */
 public enum DynamicQueryDialect {
 
-    /** {@code @DynamicJpqlQuery} — JPQL, parsed by the bundled JPA plugin. */
-    JPQL("DynamicJpqlQuery", "JPAQL"),
+    /** {@code nativeQuery = false} (the default) — JPQL, parsed by the bundled JPA plugin. */
+    JPQL("JPAQL"),
 
-    /** {@code @DynamicNativeQuery} — native SQL, parsed by the bundled Database plugin. */
-    NATIVE_SQL("DynamicNativeQuery", "SQL"),
+    /** {@code nativeQuery = true} — native SQL, parsed by the bundled Database plugin. */
+    NATIVE_SQL("SQL"),
     ;
 
-    private final String annotationSimpleName;
     private final String languageId;
 
-    DynamicQueryDialect(String annotationSimpleName, String languageId) {
-        this.annotationSimpleName = annotationSimpleName;
+    DynamicQueryDialect(String languageId) {
         this.languageId = languageId;
-    }
-
-    /** Simple name of the annotation whose value is written in this dialect. */
-    public String annotationSimpleName() {
-        return annotationSimpleName;
     }
 
     /** Id of the IntelliJ language to inject, e.g. {@code JPAQL} or {@code SQL}. */
@@ -49,20 +41,8 @@ public enum DynamicQueryDialect {
         return Language.findLanguageByID(languageId);
     }
 
-    /**
-     * The dialect declared by an annotation name, which may be qualified or simple, or
-     * {@code null} when the annotation is not a dynamic query annotation.
-     */
-    public static @Nullable DynamicQueryDialect forAnnotationName(@Nullable String annotationName) {
-        if (annotationName == null) {
-            return null;
-        }
-        String simpleName = annotationName.substring(annotationName.lastIndexOf('.') + 1);
-        for (DynamicQueryDialect dialect : values()) {
-            if (dialect.annotationSimpleName.equals(simpleName)) {
-                return dialect;
-            }
-        }
-        return null;
+    /** The dialect declared by a {@code nativeQuery} value. */
+    public static DynamicQueryDialect forNativeQuery(boolean nativeQuery) {
+        return nativeQuery ? NATIVE_SQL : JPQL;
     }
 }

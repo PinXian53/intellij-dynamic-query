@@ -16,16 +16,17 @@
 
 > Jetbrains Marketplace: https://plugins.jetbrains.com/plugin/34291-dynamic-query
 
-IDE support for dynamic queries, where `[ ... ]` marks an optional predicate that the runtime
-keeps or drops depending on whether its parameters are bound.
+IDE support for `@DynamicQuery`, where `[ ... ]` marks an optional predicate that the runtime
+keeps or drops depending on whether its parameters are bound. The annotation's `nativeQuery`
+attribute decides which language is injected:
 
-| Annotation            | Injected language | Provided by               |
-|-----------------------|-------------------|---------------------------|
-| `@DynamicJpqlQuery`   | `JPAQL`           | `com.intellij.javaee.jpa` |
-| `@DynamicNativeQuery` | `SQL`             | `com.intellij.database`   |
+| `nativeQuery`       | Injected language | Provided by               |
+|---------------------|-------------------|---------------------------|
+| `false` (default)   | `JPAQL`           | `com.intellij.javaee.jpa` |
+| `true`              | `SQL`             | `com.intellij.database`   |
 
 ```java
-@DynamicJpqlQuery("""
+@DynamicQuery("""
         SELECT u FROM UserEntity u
         WHERE 1 = 1
         [ AND u.name = :name ]
@@ -36,16 +37,25 @@ keeps or drops depending on whether its parameters are bound.
 ```
 
 No `@Language("JPAQL")` is needed, `[` and `]` are not syntax errors, and JPQL highlighting,
-entity/field resolution, completion and parameter inspections all keep working.
+entity/field resolution, completion and parameter inspections all keep working. Flip
+`nativeQuery = true` and the same string is parsed as SQL instead, with table/column resolution:
+
+```java
+@DynamicQuery(value = """
+        SELECT * FROM users u
+        WHERE 1 = 1
+        [ AND u.name = :name ]
+        """, nativeQuery = true)
+```
 
 ### `countQuery`
 
-Both annotations take an optional `countQuery` for the total-count query of a paged lookup. It is
+`@DynamicQuery` takes an optional `countQuery` for the total-count query of a paged lookup. It is
 treated exactly like `value` — same dialect, same `[ ... ]` syntax, same injection — so the count
 query gets the same highlighting and inspections as the query it counts:
 
 ```java
-@DynamicJpqlQuery(
+@DynamicQuery(
         value = """
                 SELECT u FROM UserEntity u
                 WHERE 1 = 1
@@ -86,8 +96,8 @@ mapping (`toSourceOffset` / `toSourceRange`) for code that needs it outside the 
 
 | Class                             | Responsibility |
 | --------------------------------- | -------------- |
-| `DynamicQueryDialect`             | Annotation ⇄ language pairing. Add a dialect here and nothing else changes. |
-| `DynamicQueryAnnotationDetector`  | Is this Java string a dynamic query (`value` or `countQuery`), and in which dialect? |
+| `DynamicQueryDialect`             | `nativeQuery` ⇄ language pairing. |
+| `DynamicQueryAnnotationDetector`  | Is this Java string a `@DynamicQuery` query (`value` or `countQuery`), and — via `nativeQuery` — in which dialect? |
 | `DynamicQueryLexer` / `DynamicQueryParser` | Tokenise and parse the `[ ... ]` syntax into a tree. |
 | `DynamicQueryPreprocessor`        | Flatten the tree into plain query text plus `OffsetMapping`s. |
 | `DynamicQueryPsiUtils`            | Literal content ranges, string-concatenation handling. |
@@ -96,7 +106,8 @@ mapping (`toSourceOffset` / `toSourceRange`) for code that needs it outside the 
 
 ### What it deliberately handles
 
-- The `value` and `countQuery` attributes of both annotations, named or in the `@A("...")` shorthand.
+- The `value` and `countQuery` attributes, named or in the `@DynamicQuery("...")` shorthand.
+- `nativeQuery` written as a literal or as a compile-time constant; anything else falls back to JPQL.
 - Text blocks and ordinary string literals, including `"a" + "b"` concatenation.
 - Nested optional blocks: `[ AND (u.a = :a [ OR u.b = :b ]) ]`.
 - Brackets inside string literals: `WHERE u.code LIKE '[%'` is not a marker.
@@ -134,30 +145,20 @@ only one of the JPA and Database plugins and simply injects the dialect it can.
 ## Runtime side
 
 This plugin only covers the IDE. Stripping the markers at runtime and deciding which predicates
-survive is the job of the `@DynamicJpqlQuery` / `@DynamicNativeQuery` runtime, which is a separate
-artifact. The two share only the `[ ... ]` syntax definition.
+survive is the job of the `@DynamicQuery` runtime, which is a separate artifact. The two share only
+the `[ ... ]` syntax definition.
 
-For a quick manual check, the annotations the plugin recognises are matched by simple name, so any
-declaration works:
-
-```java
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface DynamicJpqlQuery {
-    String value();
-
-    String countQuery() default "";
-}
-```
+The annotation is matched by simple name, so any declaration works:
 
 ```java
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface DynamicNativeQuery {
+public @interface DynamicQuery {
     String value();
 
     String countQuery() default "";
+
+    boolean nativeQuery() default false;
 }
 ```

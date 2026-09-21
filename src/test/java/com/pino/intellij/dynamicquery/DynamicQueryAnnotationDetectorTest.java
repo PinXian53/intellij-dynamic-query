@@ -29,4 +29,19 @@ public class DynamicQueryAnnotationDetectorTest {
         assertFalse(DynamicQueryAnnotationDetector.isQueryAttribute("countquery"));
         assertFalse(DynamicQueryAnnotationDetector.isQueryAttribute(""));
     }
+
+    @Test
+    public void simpleAndQualifiedAnnotationNamesAreRecognised() {
+        assertTrue(DynamicQueryAnnotationDetector.isDynamicQueryAnnotationName("DynamicQuery"));
+        assertTrue(DynamicQueryAnnotationDetector.isDynamicQueryAnnotationName(
+                "com.pino.persistence.DynamicQuery"));
+    }
+
+    @Test
+    public void otherAnnotationsAreNotDynamicQueries() {
+        assertFalse(DynamicQueryAnnotationDetector.isDynamicQueryAnnotationName(
+                "org.springframework.data.jpa.repository.Query"));
+        assertFalse(DynamicQueryAnnotationDetector.isDynamicQueryAnnotationName("DynamicQueries"));
+        assertFalse(DynamicQueryAnnotationDetector.isDynamicQueryAnnotationName(null));
+    }
 }
